@@ -1,16 +1,20 @@
 import { useQuery } from '@tanstack/react-query'
 import { orderService } from '@/services/orderService'
-import dayjs from 'dayjs'
-import { Card, Table, Tag, Typography, Spin } from 'antd'
+import { Card, Table, Tag, Typography, Spin, Button } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { Order } from '@/types'
+import { Link } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
 
 const { Title } = Typography
 
 export default function Orders() {
+  const { user } = useAuth()
+
   const { data: orders, isLoading } = useQuery({
-    queryKey: ['my-orders'],
-    queryFn: orderService.getMyOrders,
+    queryKey: ['my-orders', user?.username],
+    queryFn: () => orderService.getMyOrders(user?.username || ''),
+    enabled: !!user?.username,
   })
 
   const columns: ColumnsType<Order> = [
@@ -27,15 +31,9 @@ export default function Orders() {
       render: (name: string) => name || 'N/A',
     },
     {
-      title: 'Quantity',
+      title: 'Qty',
       dataIndex: 'quantity',
       key: 'quantity',
-    },
-    {
-      title: 'Total Price',
-      dataIndex: 'totalPrice',
-      key: 'totalPrice',
-      render: (price: number) => `$${price}`,
     },
     {
       title: 'Status',
@@ -56,10 +54,13 @@ export default function Orders() {
       ),
     },
     {
-      title: 'Date',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (date: string) => dayjs(date).format('MMM DD, YYYY'),
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Link to={`/orders/${record.id}`}>
+          <Button size="small">View</Button>
+        </Link>
+      ),
     },
   ]
 
@@ -75,6 +76,7 @@ export default function Orders() {
           columns={columns}
           dataSource={orders}
           rowKey="id"
+          scroll={{ x: true }}
           pagination={{ pageSize: 10 }}
         />
       </Card>

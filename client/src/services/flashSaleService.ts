@@ -1,33 +1,44 @@
 import api from '@/lib/api'
 import type { FlashSale } from '@/types'
 
+type ApiListResponse<T> = {
+  data: {
+    total: number
+    items: T[]
+    page: number
+    limit: number
+  }
+  page: number
+  limit: number
+}
+
+type FlashSaleApi = {
+  _id: string
+  title: string
+  imageUrl?: string
+  description?: string
+  startTime: string
+  endTime: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+type FlashSaleResponse = {
+  data: FlashSaleApi
+}
+
+
 export const flashSaleService = {
-  async getAll(): Promise<FlashSale[]> {
-    const { data } = await api.get<FlashSale[]>('/flash-sales')
-    return data
+  async getAll(page = 1, limit = 10): Promise<FlashSaleApi[]> {
+    const { data } = await api.get<ApiListResponse<FlashSaleApi>>('/flash-sales', {
+      params: { page, limit },
+    })
+    return data.data.items
   },
 
-  async getActive(): Promise<FlashSale[]> {
-    const { data } = await api.get<FlashSale[]>('/flash-sales/active')
-    return data
-  },
-
-  async getById(id: string): Promise<FlashSale> {
-    const { data } = await api.get<FlashSale>(`/flash-sales/${id}`)
-    return data
-  },
-
-  async create(flashSale: Partial<FlashSale>): Promise<FlashSale> {
-    const { data } = await api.post<FlashSale>('/flash-sales', flashSale)
-    return data
-  },
-
-  async update(id: string, flashSale: Partial<FlashSale>): Promise<FlashSale> {
-    const { data } = await api.patch<FlashSale>(`/flash-sales/${id}`, flashSale)
-    return data
-  },
-
-  async delete(id: string): Promise<void> {
-    await api.delete(`/flash-sales/${id}`)
+  async getById(id: string): Promise<FlashSaleApi> {
+    const { data } = await api.get<FlashSaleResponse>(`/flash-sales/${id}`)
+    return data.data
   },
 }

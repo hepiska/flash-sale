@@ -62,7 +62,7 @@ export default function Layout() {
           {isAuthenticated ? (
             <>
               <Text>
-                <UserOutlined /> {user?.firstName} {user?.lastName}
+                <UserOutlined /> {user?.username}
               </Text>
               <Button onClick={handleLogout}>Logout</Button>
             </>
@@ -78,7 +78,7 @@ export default function Layout() {
           )}
         </Space>
       </Header>
-      <Content style={{ padding: '24px 50px', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
+      <Content style={{ padding: '24px 12px', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
         <Outlet />
       </Content>
     </AntLayout>

@@ -26,5 +26,19 @@ productRouter.get('/sale/:saleId', async (req, res) => {
   }
 })
 
+productRouter.get("/:id", async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const product = await productService.getProductById(productId);
+    if (!product) {
+      return res.status(404).send({ error: "Product not found" });
+    }
+    return res.status(200).send({ data: product });
+  } catch (err) {
+    console.error('Error fetching product by ID:', err);
+    return res.status(500).send({ error: 'Internal Server Error' });
+  }
+})
+
 
 export default productRouter;

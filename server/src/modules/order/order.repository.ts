@@ -1,11 +1,11 @@
 import { IListResponseData } from '../common/interfaces/response.interface';
 import { ORDER_STATUS } from './order.constant';
-import { IOrderCreateData } from './order.interface';
-import orderModel, { IOrderDocument } from './order.model';
+import { IOrderCreateData, IOrderDocument, IOrderProductSnapshot } from './order.interface';
+import orderModel from './order.model';
 
 const orderRepository = {
-  createOrder: async (orderData: IOrderCreateData): Promise<IOrderDocument> => {
-    const order = new orderModel(orderData);
+  createOrder: async (orderData: IOrderCreateData, productSnapshot: IOrderProductSnapshot): Promise<IOrderDocument> => {
+    const order = new orderModel({ ...orderData, product: productSnapshot });
     return await order.save();
   },
   getOrderById: async (orderId: string): Promise<IOrderDocument | null> => {
@@ -28,6 +28,9 @@ const orderRepository = {
   },
   updateOrderStatus: async (orderId: string, status: ORDER_STATUS, systemNote?: string): Promise<IOrderDocument | null> => {
     return await orderModel.findByIdAndUpdate(orderId, { status, systemNote }, { new: true });
+  },
+  getOrderByIdWithDetails: async (orderId: string): Promise<IOrderDocument | null> => {
+    return await orderModel.findById(orderId);
   }
 };
 

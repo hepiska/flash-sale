@@ -1,9 +1,5 @@
 export interface User {
-  id: string
-  email: string
-  firstName: string
-  lastName: string
-  role: string
+  username: string
 }
 
 export interface Product {
@@ -21,7 +17,6 @@ export interface Product {
 export interface FlashSale {
   id: string
   productId: string
-  product?: Product
   discountPrice: number
   discountPercentage: number
   availableQuantity: number
@@ -33,11 +28,19 @@ export interface FlashSale {
   updatedAt: string
 }
 
+export interface IProductSnapshot {
+  name: string
+  description: string
+  price: number
+  stock: number
+  imageUrl?: string
+}
+
 export interface Order {
   id: string
   userId: string
   productId: string
-  product?: Product
+  product?: IProductSnapshot
   quantity: number
   unitPrice: number
   totalPrice: number
@@ -53,19 +56,11 @@ export interface AuthResponse {
 }
 
 export interface LoginCredentials {
-  email: string
-  password: string
+  username: string
 }
 
-export interface RegisterData {
-  email: string
-  password: string
-  firstName: string
-  lastName: string
-}
 
 export interface CreateOrderData {
   productId: string
   quantity: number
-  flashSaleId?: string
 }

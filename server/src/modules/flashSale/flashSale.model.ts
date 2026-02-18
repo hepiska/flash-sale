@@ -20,6 +20,7 @@ const FlashSaleSchema = new mongoose.Schema({
   title: { type: String, required: true },
   imageUrl: { type: String },
   description: { type: String },
+
   // Sale Window
   startTime: { type: Date, required: true },
   endTime: { type: Date, required: true },

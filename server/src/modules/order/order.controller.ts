@@ -10,9 +10,6 @@ orderRouter.post("/", async (req, res) => {
   try {
     const orderData = validateCreateOrderBody(req.body)
     const result = await orderService.createOrder(orderData)
-
-
-
     res.status(201).send(result)
   } catch (err) {
     console.error('Error creating order:', err)
@@ -23,6 +20,31 @@ orderRouter.post("/", async (req, res) => {
     }
   }
 })
+
+orderRouter.get("/:id", async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const order = await orderService.getOrderById(orderId);
+    if (!order) {
+      return res.status(404).send({ error: "Order not found" });
+    }
+    return res.status(200).send({ data: order });
+  } catch (err) {
+    console.error('Error fetching order by ID:', err);
+    return res.status(500).send({ error: 'Internal Server Error' });
+  }
+})
+
+orderRouter.get("/users/:userName", async (req, res) => {
+  try {
+    const userName = req.params.userName;
+    const orders = await orderService.getOrdersByUserName(userName);
+    return res.status(200).send({ data: orders });
+  } catch (err) {
+    console.error('Error fetching orders by user name:', err);
+    return res.status(500).send({ error: 'Internal Server Error' });
+  }
+});
 
 
 

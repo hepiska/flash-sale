@@ -1,6 +1,6 @@
 import rabbit from "../../lib/queue";
-import { ORDER_QUEUE_CHANNELS, ORDER_EXCHANGES } from "./order.constant";
-import { IOrderDocument } from "./order.model";
+import { ORDER_EXCHANGES } from "./order.constant";
+import { IOrderDocument } from "./order.interface";
 
 
 const applyOrderPublisher = rabbit.createPublisher({

@@ -1,44 +1,55 @@
-import { Card, Row, Col, Typography } from 'antd'
-import { ShoppingOutlined, ThunderboltOutlined, FileTextOutlined } from '@ant-design/icons'
+import { Card, Carousel, Empty, Spin, Typography } from 'antd'
+import { useQuery } from '@tanstack/react-query'
+import { flashSaleService } from '@/services/flashSaleService'
+import { useNavigate } from 'react-router-dom'
 
-const { Title, Paragraph } = Typography
+const { Title, Paragraph, Text } = Typography
 
 export default function Home() {
+  const { data: flashSales, isLoading } = useQuery({
+    queryKey: ['flash-sales', 'home'],
+    queryFn: () => flashSaleService.getAll(1, 10),
+  })
+
+  const navigate = useNavigate()
+
+  const handleSaleClick = (id: string) => {
+    navigate(`/flash-sales/${id}`)
+  }
+
   return (
-    <div style={{ textAlign: 'center', padding: '48px 0' }}>
-      <Title level={1}>Welcome to Flash Sale System</Title>
-      <Paragraph style={{ fontSize: '18px', marginBottom: '32px' }}>
-        Get amazing deals on products with limited-time flash sales!
-      </Paragraph>
-      <Row gutter={[24, 24]} style={{ marginTop: '48px' }}>
-        <Col xs={24} md={8}>
-          <Card hoverable>
-            <ShoppingOutlined style={{ fontSize: '48px', color: '#1890ff', marginBottom: '16px' }} />
-            <Title level={4}>Browse Products</Title>
-            <Paragraph>
-              Explore our wide range of products available for purchase
-            </Paragraph>
-          </Card>
-        </Col>
-        <Col xs={24} md={8}>
-          <Card hoverable>
-            <ThunderboltOutlined style={{ fontSize: '48px', color: '#1890ff', marginBottom: '16px' }} />
-            <Title level={4}>Flash Sales</Title>
-            <Paragraph>
-              Don't miss out on limited-time deals with huge discounts
-            </Paragraph>
-          </Card>
-        </Col>
-        <Col xs={24} md={8}>
-          <Card hoverable>
-            <FileTextOutlined style={{ fontSize: '48px', color: '#1890ff', marginBottom: '16px' }} />
-            <Title level={4}>Track Orders</Title>
-            <Paragraph>
-              Keep track of all your purchases and order history
-            </Paragraph>
-          </Card>
-        </Col>
-      </Row>
+    <div style={{ padding: '8px 0' }}>
+      {isLoading ? (
+        <div style={{ textAlign: 'center', padding: '48px 0' }}>
+          <Spin size="large" />
+        </div>
+      ) : flashSales && flashSales.length > 0 ? (
+        <Carousel dots>
+          {flashSales.map((sale) => (
+            <div key={sale._id}>
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '0 16px' }}>
+                <Card
+                  onClick={() => handleSaleClick(sale._id)}
+                  style={{ maxWidth: 720, width: '100%' }}
+                  title={sale.title}
+                >
+                  <Paragraph style={{ marginBottom: 8 }}>
+                    <Text strong>Start:</Text> {new Date(sale.startTime).toLocaleString()}
+                  </Paragraph>
+                  <Paragraph style={{ marginBottom: 8 }}>
+                    <Text strong>End:</Text> {new Date(sale.endTime).toLocaleString()}
+                  </Paragraph>
+                  <Paragraph style={{ marginBottom: 0 }}>
+                    <Text strong>Status:</Text> {sale.isActive ? 'Active' : 'Inactive'}
+                  </Paragraph>
+                </Card>
+              </div>
+            </div>
+          ))}
+        </Carousel>
+      ) : (
+        <Empty description="No flash sales available" />
+      )}
     </div>
   )
 }

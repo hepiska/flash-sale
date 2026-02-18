@@ -3,6 +3,7 @@ import mongoose, { Schema, model, Document } from 'mongoose'
 export interface ProductDocument extends Document {
   name: string
   description?: string
+  imageUrl?: string
   totalStock: number
   remainingStock: number
   isActive: boolean
@@ -40,6 +41,11 @@ const ProductSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'flashsales',
     default: null
+  },
+  price: {
+    type: Number,
+    required: true,
+    min: 0
   },
   // To manually kill a sale if something goes wrong
   isActive: {

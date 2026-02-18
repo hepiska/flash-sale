@@ -9,23 +9,30 @@ import { publishApplyOrder } from "./order.publisher";
 const orderService = {
   createOrder: async (orderData: IOrderCreateData) => {
 
+    const product = await productService.getProductById(orderData.productId);
+    if (!product) {
+      throw new ClientError('Product not found', 404);
+    }
     const prevOrder = await orderRepository.getOrderByProductAndOrderId(orderData.productId, orderData.userName);
     console.log('Creating order with data:', orderData);
 
     if (prevOrder) {
       throw new ClientError('Duplicate order for the same product ', 400);
     }
-    const product = await productService.getProductById(orderData.productId);
-    if (!product) {
-      throw new ClientError('Product not found', 404);
-    }
+
     if (product.remainingStock < orderData.quantity) {
       throw new ClientError('Insufficient stock for the product', 400);
     }
     const createdOrder = await orderRepository.createOrder({
       ...orderData,
       status: ORDER_STATUS.PENDING
+    }, {
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      imageUrl: product.imageUrl,
     });
+
 
     await publishApplyOrder(createdOrder._id.toString(), createdOrder);
     // Logic to create an order
@@ -44,9 +51,11 @@ const orderService = {
   },
 
   getOrderById: async (orderId: string) => {
-    // Logic to retrieve an order by ID
-    return { message: 'Order retrieved successfully', orderId };
+    return await orderRepository.getOrderByIdWithDetails(orderId);
   },
+  getOrdersByUserName: async (userName: string) => {
+    return await orderRepository.getOrderByUserName(userName, 1, 100);
+  }
 
 }
 
