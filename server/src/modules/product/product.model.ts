@@ -2,6 +2,7 @@ import mongoose, { Schema, model, Document } from 'mongoose'
 
 export interface ProductDocument extends Document {
   name: string
+  slug?: string
   description?: string
   imageUrl?: string
   totalStock: number
@@ -18,6 +19,12 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true
+  },
+  slug: {
+    type: String,
+    unique: true,
+    sparse: true,
+    index: true,
   },
   imageUrl: {
     type: String
@@ -55,5 +62,25 @@ const ProductSchema = new mongoose.Schema({
 }, {
   timestamps: true // Automatically adds createdAt and updatedAt
 });
+
+const toSlug = (value: string): string => {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '')
+}
+
+ProductSchema.pre('validate', function (next) {
+  if (!this.slug && this.name) {
+    this.slug = toSlug(this.name)
+  }
+  next()
+})
+
+
+ProductSchema.index({ slug: 1, isActive: 1 })
+ProductSchema.index({ saleId: 1, isActive: 1 })
+
 
 export const ProductModel = model<ProductDocument>('products', ProductSchema)

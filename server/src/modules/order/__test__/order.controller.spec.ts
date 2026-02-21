@@ -33,7 +33,7 @@ describe('order.controller', () => {
   it('returns 201 on successful order creation', async () => {
     const orderData = {
       userName: 'user1',
-      productId: 'prod1',
+      productSlug: 'prod-1',
       quantity: 2,
       totalPrice: 20,
       orderDate: new Date().toISOString(),
@@ -66,7 +66,7 @@ describe('order.controller', () => {
   it('returns client error when service throws ClientError', async () => {
     const orderData = {
       userName: 'user1',
-      productId: 'prod1',
+      productSlug: 'prod-1',
       quantity: 2,
       totalPrice: 20,
       orderDate: new Date(),
@@ -85,7 +85,7 @@ describe('order.controller', () => {
   it('returns 500 when service throws generic error', async () => {
     const orderData = {
       userName: 'user1',
-      productId: 'prod1',
+      productSlug: 'prod-1',
       quantity: 2,
       totalPrice: 20,
       orderDate: new Date(),

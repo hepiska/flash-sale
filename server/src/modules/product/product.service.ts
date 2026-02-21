@@ -11,6 +11,9 @@ const productService = {
   },
   getProductById: async (productId: string): Promise<ProductDocument | null> => {
     return await productRepository.getProductById(productId);
+  },
+  getProductBySlug: async (slug: string): Promise<ProductDocument | null> => {
+    return await productRepository.getProductBySlug(slug);
   }
 }
 

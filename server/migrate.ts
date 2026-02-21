@@ -15,7 +15,7 @@ const config: MigrateConfig = {
   uri: process.env.MONGO_URI ?? DEFAULT_URI,
   collection: process.env.MIGRATE_MONGO_COLLECTION ?? "migrations",
   migrationsPath: "./src/migrations",
-  autosync: false,
+  autosync: true,
 }
 
 console.log("Migration configuration:", config)

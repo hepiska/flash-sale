@@ -1,0 +1,100 @@
+title  FLASH SALE
+
+actor  user 
+rparticipant  "Flash Sale Service" as flash_sale
+rparticipant  "Product Service" as product_service
+control "Queue" as queue
+rparticipant  "Order Service" as order_service
+database "Mongo db" as database
+
+// GET flash sale list
+user -> flash_sale: GET /flash-sales
+activate flash_sale
+flash_sale -> database:get data from db
+activate database
+database -> flash_sale: success get data
+deactivate database
+flash_sale -> user: return 200
+deactivate flash_sale
+
+// get flash sale product
+user -> product_service: GET /product/sale/:flashSaleId
+activate product_service
+product_service -> database: get data
+activate database
+database -> product_service: success get data
+deactivate database
+product_service -> user: return 200
+deactivate product_service
+
+
+// get product detail 
+user -> product_service: GET product/:productId
+activate product_service
+product_service -> database: get data
+activate database
+database -> product_service: success get data
+deactivate database
+product_service -> user: return 200
+deactivate product_service
+
+user -> order_service: POST /orders
+activate order_service
+order_service -> product_service: get product 
+activate product_service 
+product_service -> order_service: return product
+deactivate product_service
+
+alt product doenst exists or out of stock
+order_service -x user: throw error 400 product doenst exist or out of stock
+else user has order respected product
+order_service -> database: get order by product and user name
+activate database
+database -> order_service: return order
+deactivate database
+order_service -x user: throw error 400 user already order this product
+
+else product exist stock avaliable and user doent order this producy before 
+order_service -> database: create order with status pending
+activate database
+database -> order_service: return order
+deactivate database
+order_service --> queue: apply order by product id as a key
+order_service -> user: return 201 order created
+deactivate order_service
+end
+
+queue --> order_service: apply order by product id
+activate order_service
+order_service -> product_service: update product stock  base product id and stock
+activate product_service
+product_service -> order_service: return data 
+deactivate product_service
+
+alt product stock updated success
+order_service -> database: update order status to complete
+activate database
+database -> order_service: update data success
+deactivate database
+else product stock update failed
+order_service -> database: update order status to canceled
+activate database
+database -> order_service: update data success
+deactivate database
+deactivate order_service
+
+end
+order_service --> queue: ack
+
+loop pooling
+user -> order_service:  GET order/:orderId
+activate order_service
+order_service -> database: get order by orderId
+activate database
+database -> order_service: return order data
+deactivate database
+deactivate order_service
+order_service -> user: return 200 with order
+
+end
+

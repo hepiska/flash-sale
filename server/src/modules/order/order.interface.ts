@@ -5,7 +5,8 @@ import { ORDER_STATUS } from "./order.constant";
 
 export interface IOrderCreateData {
   userName: string,
-  productId: string,
+  productSlug?: string,
+  productId?: string,
   quantity: number,
   totalPrice: number,
   orderDate: Date,

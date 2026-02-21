@@ -26,6 +26,8 @@ const OrderSchema = new mongoose.Schema({
   timestamps: true
 });
 
+OrderSchema.index({ productId: 1, userName: 1, orderDate: -1 });
+
 const orderModel = mongoose.model<IOrderDocument>('orders', OrderSchema);
 
 export default orderModel;

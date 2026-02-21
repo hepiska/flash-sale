@@ -15,6 +15,7 @@ type ApiListResponse<T> = {
 type ProductApi = {
   _id: string
   name: string
+  slug?: string
   imageUrl?: string
   description?: string
   price?: number
@@ -29,6 +30,7 @@ type ProductApi = {
 const mapProduct = (product: ProductApi): Product => ({
   id: product._id,
   name: product.name,
+  slug: product.slug,
   description: product.description || '',
   price: product.price ?? 0,
   stock: product.remainingStock,

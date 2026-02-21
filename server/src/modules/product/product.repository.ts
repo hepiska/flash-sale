@@ -22,6 +22,9 @@ const productRepository = {
   },
   async getProductById(productId: string): Promise<ProductDocument | null> {
     return await ProductModel.findById(productId);
+  },
+  async getProductBySlug(slug: string): Promise<ProductDocument | null> {
+    return await ProductModel.findOne({ slug, isActive: true });
   }
 
 }

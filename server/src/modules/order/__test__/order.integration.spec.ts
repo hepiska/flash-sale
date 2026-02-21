@@ -12,16 +12,19 @@ jest.mock('../order.publisher', () => ({
 describe('Order Controller Integration', () => {
   const app = createApp();
   let productId: mongoose.Types.ObjectId;
+  let productSlug: string;
 
   beforeAll(async () => {
     const product = await ProductModel.create({
       name: 'Integration Product',
       totalStock: 10,
+      price: 20,
       remainingStock: 10,
       isActive: true,
     });
 
     productId = product._id;
+    productSlug = product.slug as string;
   });
 
   afterAll(async () => {
@@ -32,7 +35,7 @@ describe('Order Controller Integration', () => {
   it('POST /orders creates an order', async () => {
     const payload = {
       userName: 'user1',
-      productId: productId.toString(),
+      productSlug,
       quantity: 1,
       totalPrice: 10,
       orderDate: new Date().toISOString(),
@@ -56,7 +59,7 @@ describe('Order Controller Integration', () => {
   it('POST /orders returns 400 for duplicate order', async () => {
     const payload = {
       userName: 'user1',
-      productId: productId.toString(),
+      productSlug,
       quantity: 1,
       totalPrice: 10,
       orderDate: new Date().toISOString(),
