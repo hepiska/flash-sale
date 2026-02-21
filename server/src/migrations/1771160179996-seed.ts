@@ -270,7 +270,7 @@ const flashSaleSeedData: FlashSaleSeed[] = [
   },
 ]
 
-const ONE_HOUR_IN_MS = 60 * 60 * 1000
+const SIX_MONTHS_IN_MS = 6 * 30 * 24 * 60 * 60 * 1000
 
 const buildFlashSalesPayload = () => {
   const baseStart = new Date()
@@ -278,8 +278,8 @@ const buildFlashSalesPayload = () => {
 
   return flashSaleSeedData.map((seed) => {
     const saleId = new Types.ObjectId()
-    const startTime = new Date(baseStart.getTime() + seed.offsetHours * ONE_HOUR_IN_MS)
-    const endTime = new Date(startTime.getTime() + seed.durationHours * ONE_HOUR_IN_MS)
+    const startTime = new Date(baseStart.getTime() + seed.offsetHours * SIX_MONTHS_IN_MS)
+    const endTime = new Date(startTime.getTime() + seed.durationHours * SIX_MONTHS_IN_MS)
     const totalStock = seed.products.reduce((sum, product) => sum + product.totalStock, 0)
 
     const saleDoc = {

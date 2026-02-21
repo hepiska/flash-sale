@@ -84,6 +84,7 @@ From server folder:
 3. the product that i test for this is aurora-noise-cancelling-buds that has 60 stock.
 4. after run the test the result show that 69 request show 201 response and after validate on the db 60 order with status complete and 9 with status canceled
 5. around 15% get error 500  base on the mongo log see,ms the mongo cant handle due to minimun resource on local
+6. the p95 below 0.4 second is consider fast with tail 4 second runing on local quite acceptable
 
 ![prev test result](./readme_data/perv_test.png)
 ![order mongo query](./readme_data/mongo_res_q.png)
@@ -91,7 +92,8 @@ From server folder:
 
 
 
-
+### notes
+1. some minor change i will add if have more time is adding indenpotency key on order creation. 
 
 ### API Spec
 OpenAPI spec: server/openapi.yaml
